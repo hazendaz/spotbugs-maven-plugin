@@ -18,6 +18,7 @@ package org.codehaus.mojo.spotbugs
 import org.apache.maven.artifact.Artifact
 
 import org.apache.maven.plugin.logging.Log
+import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.project.ProjectBuildingRequest
 import org.apache.maven.plugin.MojoExecutionException
 
@@ -40,12 +41,38 @@ trait SpotBugsPluginsTrait {
     abstract Log getLog()
     abstract ResourceManager getResourceManager()
 
-    // TODO This has been fixed for 2 years now, apply as noted...
-    // properties in traits should be supported but don't compile currently:
-    // https://issues.apache.org/jira/browse/GROOVY-7536
-    // when fixed, should move pluginList and plugins properties here
-    abstract String getPluginList()
-    abstract PluginArtifact[] getPlugins()
+    /**
+     * <p>
+     * The plugin list to include in the report. This is a comma-delimited list.
+     * </p>
+     *
+     * <p>
+     * Potential values are a filesystem path, a URL, or a classpath resource.
+     * </p>
+     *
+     * <p>
+     * This parameter is resolved as resource, URL, then file. If successfully
+     * resolved, the contents of the configuration is copied into the
+     * <code>${project.build.directory}</code>
+     * directory before being passed to Spotbugs as a plugin file.
+     * </p>
+     *
+     * @since 1.0-beta-1
+     */
+    @Parameter(property = "spotbugs.pluginList")
+    String pluginList
+
+    /**
+     * <p>
+     * Collection of PluginArtifact to work on. (PluginArtifact contains groupId, artifactId, version, type.)
+     * See <a href="./usage.html#Using Detectors from a Repository">Usage</a> for details.
+     * </p>
+     *
+     *
+     * @since 2.4.1
+     */
+    @Parameter
+    PluginArtifact[] plugins;
 
     /**
      * Adds the specified plugins to spotbugs. The coreplugin is always added first.
