@@ -40,7 +40,7 @@ import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.plugins.annotations.ResolutionScope
 
 import org.apache.maven.project.MavenProject
-
+import org.apache.maven.repository.RepositorySystem
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver
 
 import org.codehaus.plexus.resource.ResourceManager
@@ -53,9 +53,9 @@ import org.codehaus.plexus.util.FileUtils
  *
  * @since 2.0
  */
-@Mojo( name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true, threadSafe = true)
-@Execute( goal = "spotbugs")
-class SpotbugsViolationCheckMojo extends AbstractMojo {
+@Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true, threadSafe = true)
+@Execute(goal = "spotbugs")
+class SpotbugsViolationCheckMojo extends AbstractMojo implements SpotBugsPluginsTrait {
 
     /**
      * Location where generated html will be created.
@@ -170,6 +170,13 @@ class SpotbugsViolationCheckMojo extends AbstractMojo {
     List pluginArtifacts
 
     /**
+     * List of Remote Repositories used by the resolver.
+     *
+     */
+    @Parameter(property = "project.remoteArtifactRepositories", required = true, readonly = true)
+    List remoteRepositories
+
+    /**
      * The local repository, needed to download the coreplugin jar.
      *
      */
@@ -233,6 +240,13 @@ class SpotbugsViolationCheckMojo extends AbstractMojo {
      */
     @Component(role = ArtifactResolver.class)
     ArtifactResolver artifactResolver
+
+    /**
+     * Used to look up Artifacts in the remote repository.
+     *
+     */
+    @Component(role = RepositorySystem.class)
+    RepositorySystem factory
 
     /**
      * <p>
@@ -340,27 +354,6 @@ class SpotbugsViolationCheckMojo extends AbstractMojo {
      */
     @Parameter(property = "spotbugs.omitVisitors")
     String omitVisitors
-
-    /**
-     * <p>
-     * The plugin list to include in the report. This is a comma-delimited list.
-     * </p>
-     *
-     * <p>
-     * Potential values are a filesystem path, a URL, or a classpath resource.
-     * </p>
-     *
-     * <p>
-     * This parameter is resolved as resource, URL, then file. If successfully
-     * resolved, the contents of the configuration is copied into the
-     * <code>${project.build.directory}</code>
-     * directory before being passed to Spotbugs as a plugin file.
-     * </p>
-     *
-     * @since 1.0-beta-1
-     */
-    @Parameter( property="spotbugs.pluginList" )
-    String pluginList
 
     /**
      * Restrict analysis to the given comma-separated list of classes and packages.
