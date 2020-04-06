@@ -135,6 +135,13 @@ abstract class BaseViolationCheckMojo extends AbstractMojo implements SpotBugsPl
     boolean includeTests
 
     /**
+     * Run Spotbugs with -sourcepath parameter populated with the known source roots.
+     *
+     */
+    @Parameter(defaultValue = "false", property = "spotbugs.addSourceDirs")
+    boolean addSourceDirs
+
+    /**
      * List of artifacts this plugin depends on. Used for resolving the Spotbugs core plugin.
      */
     @Parameter(property = "plugin.artifacts", required = true, readonly = true)
