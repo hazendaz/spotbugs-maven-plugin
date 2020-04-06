@@ -34,7 +34,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver
 import org.codehaus.plexus.resource.ResourceManager
 
-abstract class BaseViolationCheckMojo extends AbstractMojo {
+abstract class BaseViolationCheckMojo extends AbstractMojo implements SpotBugsPluginsTrait {
 
     /** Location where generated html will be created. */
     @Parameter(defaultValue = '${project.reporting.outputDirectory}', required = true)
@@ -231,21 +231,6 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
      */
     @Parameter(property = "spotbugs.omitVisitors")
     String omitVisitors
-
-    /**
-     * The plugin list to include in the report. This is a comma-delimited list.
-     * <p>
-     * Potential values are a filesystem path, a URL, or a classpath resource.
-     * <p>
-     * This parameter is resolved as resource, URL, then file. If successfully
-     * resolved, the contents of the configuration is copied into the
-     * <code>${project.build.directory}</code>
-     * directory before being passed to Spotbugs as a plugin file.
-     *
-     * @since 1.0-beta-1
-     */
-    @Parameter(property="spotbugs.pluginList")
-    String pluginList
 
     /**
      * Restrict analysis to the given comma-separated list of classes and packages.
