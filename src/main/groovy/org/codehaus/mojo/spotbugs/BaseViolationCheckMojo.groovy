@@ -31,10 +31,11 @@ import org.apache.maven.plugins.annotations.LifecyclePhase
 import org.apache.maven.plugins.annotations.Mojo
 import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.plugins.annotations.ResolutionScope
+import org.apache.maven.repository.RepositorySystem
 import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver
 import org.codehaus.plexus.resource.ResourceManager
 
-abstract class BaseViolationCheckMojo extends AbstractMojo {
+abstract class BaseViolationCheckMojo extends AbstractMojo implements SpotBugsPluginsTrait {
 
     /** Location where generated html will be created. */
     @Parameter(defaultValue = '${project.reporting.outputDirectory}', required = true)
@@ -104,6 +105,13 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
     @Parameter(property = 'plugin.artifacts', readonly = true, required = true)
     List pluginArtifacts
 
+    /**
+     * List of Remote Repositories used by the resolver.
+     *
+     */
+    @Parameter(property = "project.remoteArtifactRepositories", required = true, readonly = true)
+    List remoteRepositories
+
     /** Maven Session. */
     @Parameter (defaultValue = '${session}', readonly = true, required = true)
     MavenSession session
@@ -136,6 +144,13 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
     /** Artifact resolver, needed to download the coreplugin jar. */
     @Inject
     ArtifactResolver artifactResolver
+
+   /**
+     * Used to look up Artifacts in the remote repository.
+     *
+     */
+    @Component(role = RepositorySystem.class)
+    RepositorySystem factory
 
     /**
      * File name of the include filter. Only bugs in matching the filters are reported.
@@ -222,21 +237,6 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
      */
     @Parameter(property = 'spotbugs.omitVisitors')
     String omitVisitors
-
-    /**
-     * The plugin list to include in the report. This is a comma-delimited list.
-     * <p>
-     * Potential values are a filesystem path, a URL, or a classpath resource.
-     * <p>
-     * This parameter is resolved as resource, URL, then file. If successfully
-     * resolved, the contents of the configuration is copied into the
-     * <code>${project.build.directory}</code>
-     * directory before being passed to Spotbugs as a plugin file.
-     *
-     * @since 1.0-beta-1
-     */
-    @Parameter(property = 'spotbugs.pluginList')
-    String pluginList
 
     /**
      * Restrict analysis to the given comma-separated list of classes and packages.
