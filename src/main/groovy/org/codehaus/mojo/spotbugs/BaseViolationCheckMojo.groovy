@@ -19,8 +19,6 @@ import groovy.xml.XmlParser
 import groovy.xml.XmlSlurper
 import org.apache.commons.io.FileUtils
 
-import org.apache.maven.artifact.repository.ArtifactRepository
-
 import org.apache.maven.doxia.siterenderer.Renderer
 import org.apache.maven.doxia.tools.SiteTool
 
@@ -139,12 +137,6 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
      */
     @Parameter(property = "plugin.artifacts", required = true, readonly = true)
     List pluginArtifacts
-
-    /**
-     * The local repository, needed to download the coreplugin jar.
-     */
-    @Parameter(property = "localRepository", required = true, readonly = true)
-    ArtifactRepository localRepository
 
     /**
      * Remote repositories which will be searched for the coreplugin jar.

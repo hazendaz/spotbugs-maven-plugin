@@ -17,8 +17,6 @@ package org.codehaus.mojo.spotbugs
 
 import groovy.ant.AntBuilder
 
-import org.apache.maven.artifact.repository.ArtifactRepository
-
 import org.apache.maven.execution.MavenSession
 
 import org.apache.maven.plugin.AbstractMojo
@@ -113,13 +111,6 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
      */
     @Parameter(property = "project.remoteArtifactRepositories", required = true, readonly = true)
     List remoteRepositories
-
-    /**
-     * The local repository, needed to download the coreplugin jar.
-     *
-     */
-    @Parameter(property = "localRepository", required = true, readonly = true)
-    ArtifactRepository localRepository
 
     /**
      * Maven Session.
