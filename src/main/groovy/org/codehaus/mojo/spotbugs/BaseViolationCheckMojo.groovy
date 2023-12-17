@@ -15,6 +15,7 @@
  */
 package org.codehaus.mojo.spotbugs
 
+import edu.umd.cs.findbugs.BugInstance
 import groovy.xml.XmlParser
 import groovy.xml.XmlSlurper
 
@@ -383,9 +384,9 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
 
         if (outputFile.exists()) {
 
-            def xml = new XmlParser().parse(outputFile)
+            Node xml = new XmlParser().parse(outputFile)
 
-            def bugs = xml.BugInstance
+            BugInstance bugs[] = xml.BugInstance as BugInstance[]
             int bugCount = bugs.size()
             log.info("BugInstance size is ${bugCount}")
 
@@ -410,7 +411,7 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
 
             int bugCountAboveThreshold = 0
             for (i in 0..bugCount-1) {
-                def bug = bugs[i]
+                BugInstance bug = bugs[i]
                 int priorityNum = bug.'@priority' as Integer
                 String priorityName = SpotBugsInfo.spotbugsPriority[priorityNum]
                 String logMsg = priorityName + ': ' + bug.LongMessage.text() + SpotBugsInfo.BLANK + bug.SourceLine.'@classname' + SpotBugsInfo.BLANK +
