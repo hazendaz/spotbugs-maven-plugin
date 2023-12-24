@@ -15,6 +15,7 @@
  */
 package org.codehaus.mojo.spotbugs
 
+import edu.umd.cs.findbugs.Project
 import groovy.ant.AntBuilder
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
@@ -1122,7 +1123,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
                 errorCount = allNodes.findAll { it.name() == 'Error' }.size()
                 log.debug("Error size is ${errorCount}")
 
-                def xmlProject = path.Project
+                Project xmlProject = path.Project
 
                 compileSourceRoots.each() { compileSourceRoot ->
                     xmlProject.appendNode { SrcDir(compileSourceRoot) }
