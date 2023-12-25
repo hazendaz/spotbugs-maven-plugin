@@ -33,7 +33,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope
 import org.apache.maven.reporting.AbstractMavenReport
 import org.apache.maven.reporting.MavenReport
 import org.apache.maven.repository.RepositorySystem
-import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver
 import org.codehaus.plexus.resource.ResourceManager
 import org.codehaus.plexus.resource.loader.FileResourceLoader
 
@@ -200,10 +199,6 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
     /** Threshold of minimum bug severity to report. Valid values are High, Default, Low, Ignore, and Exp (for experimental). */
     @Parameter(defaultValue = 'Default', property = 'spotbugs.threshold')
     String threshold
-
-    /** Artifact resolver, needed to download the coreplugin jar. */
-    @Inject
-    ArtifactResolver artifactResolver
 
     /** Used to look up Artifacts in the remote repository. */
     @Inject
