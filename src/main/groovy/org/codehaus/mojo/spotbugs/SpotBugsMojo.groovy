@@ -23,7 +23,6 @@ import groovy.xml.XmlSlurper
 import groovy.xml.slurpersupport.GPathResult;
 import groovy.xml.StreamingMarkupBuilder
 
-import org.apache.maven.artifact.repository.ArtifactRepository
 import org.apache.maven.doxia.siterenderer.Renderer
 import org.apache.maven.doxia.tools.SiteTool
 import org.apache.maven.execution.MavenSession
@@ -35,7 +34,6 @@ import org.apache.maven.project.MavenProject
 import org.apache.maven.reporting.AbstractMavenReport
 import org.apache.maven.reporting.MavenReport
 import org.apache.maven.repository.RepositorySystem
-import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver
 import org.codehaus.plexus.resource.ResourceManager
 import org.codehaus.plexus.resource.loader.FileResourceLoader
 
@@ -192,12 +190,6 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
     @Parameter(property = "project.remoteArtifactRepositories", required = true, readonly = true)
     List remoteRepositories
 
-    /**
-     * The local repository, needed to download the coreplugin jar.
-     */
-    @Parameter(property = "localRepository", required = true, readonly = true)
-    ArtifactRepository localRepository
-
     /** Remote repositories which will be searched for the coreplugin jar. */
     @Parameter(property = "project.remoteArtifactRepositories", required = true, readonly = true)
     List remoteArtifactRepositories
@@ -235,10 +227,6 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
     /** Threshold of minimum bug severity to report. Valid values are High, Default, Low, Ignore, and Exp (for experimental). */
     @Parameter(defaultValue = "Default", property = "spotbugs.threshold")
     String threshold
-
-    /** Artifact resolver, needed to download the coreplugin jar. */
-    @Inject
-    ArtifactResolver artifactResolver
 
     /** Used to look up Artifacts in the remote repository. */
     @Inject

@@ -22,7 +22,6 @@ import groovy.xml.XmlSlurper
 import javax.inject.Inject
 
 import org.apache.commons.io.FileUtils
-import org.apache.maven.artifact.repository.ArtifactRepository
 import org.apache.maven.doxia.siterenderer.Renderer
 import org.apache.maven.doxia.tools.SiteTool
 import org.apache.maven.execution.MavenSession
@@ -34,7 +33,6 @@ import org.apache.maven.plugins.annotations.Mojo
 import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.plugins.annotations.ResolutionScope
 import org.apache.maven.project.MavenProject
-import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver
 import org.codehaus.plexus.resource.ResourceManager
 
 abstract class BaseViolationCheckMojo extends AbstractMojo {
@@ -120,10 +118,6 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
     List pluginArtifacts
 
     /**
-     * The local repository, needed to download the coreplugin jar.
-     */
-    @Parameter(property = "localRepository", required = true, readonly = true)
-    ArtifactRepository localRepository
 
     /** Remote repositories which will be searched for the coreplugin jar. */
     @Parameter(property = "project.remoteArtifactRepositories", required = true, readonly = true)
@@ -162,10 +156,6 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
     /** Threshold of minimum bug severity to report. Valid values are High, Default, Low, Ignore, and Exp (for experimental). */
     @Parameter(defaultValue = "Default", property = "spotbugs.threshold")
     String threshold
-
-    /** Artifact resolver, needed to download the coreplugin jar. */
-    @Inject
-    ArtifactResolver artifactResolver
 
     /**
      * File name of the include filter. Only bugs in matching the filters are reported.

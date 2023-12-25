@@ -19,7 +19,6 @@ import groovy.ant.AntBuilder
 
 import javax.inject.Inject
 
-import org.apache.maven.artifact.repository.ArtifactRepository
 import org.apache.maven.execution.MavenSession
 import org.apache.maven.plugin.AbstractMojo
 import org.apache.maven.plugins.annotations.Mojo
@@ -27,7 +26,6 @@ import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.plugins.annotations.ResolutionScope
 import org.apache.maven.project.MavenProject
 import org.apache.maven.repository.RepositorySystem
-import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver
 import org.codehaus.plexus.resource.ResourceManager
 
 /**
@@ -60,10 +58,6 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
     @Parameter(defaultValue = "Default", property="spotbugs.effort")
     String effort
 
-    /** Artifact resolver, needed to download the coreplugin jar. */
-    @Inject
-    ArtifactResolver artifactResolver
-
     /** Used to look up Artifacts in the remote repository. */
     @Inject
     RepositorySystem factory
@@ -71,13 +65,6 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
     /** List of Remote Repositories used by the resolver. */
     @Parameter(property = "project.remoteArtifactRepositories", required = true, readonly = true)
     List remoteRepositories
-
-    /**
-     * The local repository, needed to download the coreplugin jar.
-     *
-     */
-    @Parameter(property = "localRepository", required = true, readonly = true)
-    ArtifactRepository localRepository
 
     /** Maven Session. */
     @Parameter (defaultValue = '${session}', required = true, readonly = true)
