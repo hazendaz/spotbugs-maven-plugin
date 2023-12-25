@@ -24,8 +24,6 @@ import org.apache.maven.plugin.MojoExecutionException
 
 import org.apache.maven.repository.RepositorySystem
 
-import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver
-import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResult
 import org.codehaus.plexus.resource.ResourceManager
 
 /**
@@ -35,7 +33,6 @@ trait SpotBugsPluginsTrait {
 
     // the trait needs certain objects to work, this need is expressed as abstract getters
     // classes implement them with implicitly generated property getters
-    abstract ArtifactResolver getArtifactResolver()
     abstract RepositorySystem getFactory()
     abstract File getSpotbugsXmlOutputDirectory()
     abstract Log getLog()

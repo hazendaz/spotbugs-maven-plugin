@@ -32,7 +32,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase
 import org.apache.maven.plugins.annotations.Mojo
 import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.plugins.annotations.ResolutionScope
-import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver
 import org.codehaus.plexus.resource.ResourceManager
 
 abstract class BaseViolationCheckMojo extends AbstractMojo {
@@ -142,10 +141,6 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
     /** Threshold of minimum bug severity to report. Valid values are High, Default, Low, Ignore, and Exp (for experimental). */
     @Parameter(defaultValue = "Default", property = "spotbugs.threshold")
     String threshold
-
-    /** Artifact resolver, needed to download the coreplugin jar. */
-    @Inject
-    ArtifactResolver artifactResolver
 
     /**
      * File name of the include filter. Only bugs in matching the filters are reported.

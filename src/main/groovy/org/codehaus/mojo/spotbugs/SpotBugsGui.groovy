@@ -25,7 +25,6 @@ import org.apache.maven.plugins.annotations.Mojo
 import org.apache.maven.plugins.annotations.Parameter
 import org.apache.maven.plugins.annotations.ResolutionScope
 import org.apache.maven.repository.RepositorySystem
-import org.apache.maven.shared.transfer.artifact.resolve.ArtifactResolver
 import org.codehaus.plexus.resource.ResourceManager
 
 /**
@@ -57,10 +56,6 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
     /** Effort of the bug finders. Valid values are Min, Default and Max. */
     @Parameter(defaultValue = "Default", property="spotbugs.effort")
     String effort
-
-    /** Artifact resolver, needed to download the coreplugin jar. */
-    @Inject
-    ArtifactResolver artifactResolver
 
     /** Used to look up Artifacts in the remote repository. */
     @Inject
