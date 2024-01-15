@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 import groovy.json.JsonSlurper
+import edu.umd.cs.findbugs.sarif.Location
+import edu.umd.cs.findbugs.sarif.Result
 
 File spotbugSarifFile = new File(basedir, 'target/spotbugsSarif.json')
 assert spotbugSarifFile.exists()
@@ -26,9 +28,9 @@ String normalizePath(String path) {
     return path.replaceAll("\\\\","/");
 }
 
-def slurpedResult = new JsonSlurper().parse(spotbugSarifFile)
+List<Result> slurpedResult = new JsonSlurper().parse(spotbugSarifFile)
 
-def results = slurpedResult.runs.results[0]
+List<Location> results = slurpedResult.runs.results[0]
 
 for (result in results) {
     for (loc in result.locations) {

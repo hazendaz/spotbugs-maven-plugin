@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 import groovy.json.JsonSlurper
-import groovy.xml.slurpersupport.GPathResult;
+import edu.umd.cs.findbugs.sarif.Location
+import edu.umd.cs.findbugs.sarif.Result
 
 File spotbugSarifFile = new File(basedir, 'target/spotbugsSarif.json')
 assert spotbugSarifFile.exists()
@@ -23,9 +24,9 @@ println '*******************'
 println 'Checking SARIF file'
 println '*******************'
 
-def path = new JsonSlurper().parse(spotbugSarifFile)
+List<Result> path = new JsonSlurper().parse(spotbugSarifFile)
 
-def results = path.runs.results[0]
+List<Location> results = path.runs.results[0]
 println "BugInstance size is ${results.size()}"
 
 assert results.size() > 0
