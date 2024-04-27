@@ -15,6 +15,7 @@
  */
 package org.codehaus.mojo.spotbugs
 
+import edu.umd.cs.findbugs.BugInstance
 import groovy.xml.XmlParser
 import groovy.xml.XmlSlurper
 
@@ -414,7 +415,7 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
 
             def xml = new XmlParser().parse(outputFile)
 
-            def bugs = xml.BugInstance
+            BugInstance bugs = xml.BugInstance
             int bugCount = bugs.size()
             log.info("BugInstance size is ${bugCount}")
 
