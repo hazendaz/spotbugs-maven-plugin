@@ -31,14 +31,6 @@ import org.codehaus.plexus.resource.ResourceManager
  */
 trait SpotBugsPluginsTrait {
 
-    // the trait needs certain objects to work, this need is expressed as abstract getters
-    // classes implement them with implicitly generated property getters
-    abstract RepositorySystem getFactory()
-    abstract List getRemoteRepositories()
-    abstract File getSpotbugsXmlOutputDirectory()
-    abstract Log getLog()
-    abstract ResourceManager getResourceManager()
-
     /**
      * The plugin list to include in the report. This is a comma-delimited list.
      * <p>
@@ -63,6 +55,14 @@ trait SpotBugsPluginsTrait {
      */
     @Parameter
     PluginArtifact[] plugins
+
+    // the trait needs certain objects to work, this need is expressed as abstract getters
+    // classes implement them with implicitly generated property getters
+    abstract RepositorySystem getFactory()
+    abstract List getRemoteRepositories()
+    abstract File getSpotbugsXmlOutputDirectory()
+    abstract Log getLog()
+    abstract ResourceManager getResourceManager()
 
     /**
      * Adds the specified plugins to spotbugs. The coreplugin is always added first.
