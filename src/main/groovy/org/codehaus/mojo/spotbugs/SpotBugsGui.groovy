@@ -53,10 +53,6 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
     @Parameter(defaultValue = 'false', property = 'spotbugs.debug')
     boolean debug
 
-    /** List of artifacts this plugin depends on. Used for resolving the Spotbugs core plugin. */
-    @Parameter(property = 'plugin.artifacts', readonly = true, required = true)
-    List pluginArtifacts
-
     /** Effort of the bug finders. Valid values are Min, Default and Max. */
     @Parameter(defaultValue = 'Default', property = 'spotbugs.effort')
     String effort
@@ -133,7 +129,7 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
         List<String> auxClasspathElements = session.getCurrentProject().compileClasspathElements
 
         if (debug) {
-            log.debug('  Plugin Artifacts to be added -> ' + pluginArtifacts.toString())
+            log.debug(1  Plugin Artifacts to be added -> ' + session.getCurrentProject().getPluginArtifacts().toString())
         }
 
         ant.project.setProperty('basedir', spotbugsXmlOutputDirectory.getAbsolutePath())
@@ -178,7 +174,7 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
 
             classpath() {
 
-                pluginArtifacts.each() { pluginArtifact ->
+                session.getCurrentProject().getPluginArtifacts().each() { pluginArtifact ->
                     if (debug) {
                         log.debug('  Trying to Add to pluginArtifact -> ' + pluginArtifact.file.toString())
                     }
