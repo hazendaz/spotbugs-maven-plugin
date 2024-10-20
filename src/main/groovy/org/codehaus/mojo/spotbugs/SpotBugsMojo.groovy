@@ -170,10 +170,6 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
     @Parameter(defaultValue = 'false', property = 'spotbugs.addSourceDirs')
     boolean addSourceDirs
 
-    /** List of artifacts this plugin depends on. Used for resolving the Spotbugs core plugin. */
-    @Parameter(property = 'plugin.artifacts', readonly = true, required = true)
-    List pluginArtifacts
-
     /** Maven Session. */
     @Parameter (defaultValue = '${session}', readonly = true, required = true)
     MavenSession session
@@ -629,7 +625,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             log.debug('report Output Directory is ' + getReportOutputDirectory())
             log.debug('Output Directory is ' + outputDirectory)
             log.debug('Classes Directory is ' + classFilesDirectory)
-            log.debug('  Plugin Artifacts to be added -> ' + pluginArtifacts.toString())
+            log.debug('  Plugin Artifacts to be added -> ' + session.getCurrentProject().getPluginArtifacts().toString())
         }
 
         generateXDoc(locale)
@@ -1036,7 +1032,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
         if (log.isDebugEnabled()) {
             log.debug("resourceManager.outputDirectory is ${resourceManager.outputDirectory}")
-            log.debug("Plugin Artifacts to be added -> ${pluginArtifacts.toString()}")
+            log.debug("Plugin Artifacts to be added -> ${session.getCurrentProject().getPluginArtifacts().toString()}")
             log.debug("outputFile is ${outputFile.getCanonicalPath()}")
             log.debug("output Directory is ${spotbugsXmlOutputDirectory.getAbsolutePath()}")
             if (htmlOutput) {
@@ -1088,7 +1084,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
             classpath() {
 
-                pluginArtifacts.each() { pluginArtifact ->
+                session.getCurrentProject().getPluginArtifacts().each() { pluginArtifact ->
                     log.debug('  Adding to pluginArtifact -> ' + pluginArtifact.file.toString())
 
                     pathelement(location: pluginArtifact.file)
