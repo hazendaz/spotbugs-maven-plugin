@@ -100,10 +100,6 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
     @Parameter(defaultValue = 'false', property = 'spotbugs.includeTests')
     boolean includeTests
 
-    /** List of artifacts this plugin depends on. Used for resolving the Spotbugs core plugin. */
-    @Parameter(property = 'plugin.artifacts', readonly = true, required = true)
-    List pluginArtifacts
-
     /** Maven Session. */
     @Parameter (defaultValue = '${session}', readonly = true, required = true)
     MavenSession session
