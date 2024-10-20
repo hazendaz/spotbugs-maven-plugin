@@ -527,9 +527,9 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
         boolean canGenerate
         log.debug('****** SpotBugsMojo canGenerateReport *******')
 
-        if (!skip && classFilesDirectory.exists()) {
+        if (!skip && session.getCurrentPoject().classFilesDirectory().exists()) {
 
-            classFilesDirectory.eachFileRecurse {
+            session.getCurrentPoject().classFilesDirectory().eachFileRecurse {
                 if (it.name.contains(SpotBugsInfo.CLASS_SUFFIX)) {
                     canGenerate = true
                 }
@@ -537,9 +537,9 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             log.debug("canGenerate Src is ${canGenerate}")
         }
 
-        if (!skip && testClassFilesDirectory.exists() && includeTests) {
+        if (!skip && session.getCurrentPoject().testClassFilesDirectory().exists() && includeTests) {
 
-            testClassFilesDirectory.eachFileRecurse {
+            session.getCurrentPoject().testClassFilesDirectory().eachFileRecurse {
                 if (it.name.contains(SpotBugsInfo.CLASS_SUFFIX)) {
                     canGenerate = true
                 }
@@ -628,7 +628,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             log.debug('****** SpotBugsMojo executeReport *******')
             log.debug('report Output Directory is ' + getReportOutputDirectory())
             log.debug('Output Directory is ' + outputDirectory)
-            log.debug('Classes Directory is ' + classFilesDirectory)
+            log.debug('Classes Directory is ' + session.getCurrentPoject().classFilesDirectory())
             log.debug('  Plugin Artifacts to be added -> ' + pluginArtifacts.toString())
         }
 
@@ -645,7 +645,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             } else {
                 log.debug('Generating Spotbugs HTML')
 
-                SpotbugsReportGenerator generator = new SpotbugsReportGenerator(getSink(), getBundle(locale), this.session.getCurrentProject().getBasedir(), siteTool)
+                SpotbugsReportGenerator generator = new SpotbugsReportGenerator(getSink(), getBundle(locale), session.getCurrentProject().getBasedir(), siteTool)
 
                 boolean isJxrPluginEnabled = isJxrPluginEnabled()
 
@@ -934,14 +934,14 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             args << maxRank
         }
 
-        if (classFilesDirectory.isDirectory()) {
-            log.debug('  Adding to Source Directory -> ' + classFilesDirectory.absolutePath)
-            args << classFilesDirectory.absolutePath
+        if (session.getCurrentPoject().classFilesDirectory().isDirectory()) {
+            log.debug('  Adding to Source Directory -> ' + session.getCurrentPoject().classFilesDirectory().absolutePath)
+            args << session.getCurrentPoject().classFilesDirectory().absolutePath
         }
 
-        if (testClassFilesDirectory.isDirectory() && includeTests) {
-            log.debug('  Adding to Source Directory -> ' + testClassFilesDirectory.absolutePath)
-            args << testClassFilesDirectory.absolutePath
+        if (session.getCurrentPoject().testClassFilesDirectory().isDirectory() && includeTests) {
+            log.debug('  Adding to Source Directory -> ' + session.getCurrentPoject().testClassFilesDirectory().absolutePath)
+            args << session.getCurrentPoject().testClassFilesDirectory().absolutePath
         }
 
         if (noClassOk) {
@@ -959,9 +959,9 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
     private File createSpotbugsAuxClasspathFile() {
         List<String> auxClasspathElements
 
-        if (testClassFilesDirectory.isDirectory() && includeTests) {
+        if (session.getCurrentPoject().testClassFilesDirectory().isDirectory() && includeTests) {
             auxClasspathElements = session.getCurrentProject().testClasspathElements
-        } else if (classFilesDirectory.isDirectory()) {
+        } else if (session.getCurrentPoject().classFilesDirectory().isDirectory()) {
             auxClasspathElements = session.getCurrentProject().compileClasspathElements
         }
 
