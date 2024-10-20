@@ -76,14 +76,6 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
     @Inject
     Renderer siteRenderer
 
-    /** Directory containing the class files for Spotbugs to analyze. */
-    @Parameter(defaultValue = '${project.build.outputDirectory}', required = true)
-    File classFilesDirectory
-
-    /** Directory containing the test class files for Spotbugs to analyze. */
-    @Parameter(defaultValue = '${project.build.testOutputDirectory}', required = true)
-    File testClassFilesDirectory
-
     /** Location of the Xrefs to link to. */
     @Parameter(defaultValue = '${project.reporting.outputDirectory}/xref')
     File xrefLocation
@@ -438,14 +430,14 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
     private boolean doSourceFilesExist() {
         Collection<File> sourceFiles = new ArrayList<>()
 
-        if (this.classFilesDirectory.isDirectory()) {
+        if (session.getCurrentPoject().classFilesDirectory().isDirectory()) {
             log.debug('looking for class files with extensions: ' + SpotBugsInfo.EXTENSIONS)
-            sourceFiles.addAll(FileUtils.listFiles(classFilesDirectory, SpotBugsInfo.EXTENSIONS, true))
+            sourceFiles.addAll(FileUtils.listFiles(session.getCurrentPoject().classFilesDirectory(), SpotBugsInfo.EXTENSIONS, true))
         }
 
-        if (this.includeTests && this.testClassFilesDirectory.isDirectory()) {
+        if (this.includeTests && session.getCurrentPoject().testClassFilesDirectory().isDirectory()) {
             log.debug('looking for test class files: ' + SpotBugsInfo.EXTENSIONS)
-            sourceFiles.addAll(FileUtils.listFiles(testClassFilesDirectory, SpotBugsInfo.EXTENSIONS, true))
+            sourceFiles.addAll(FileUtils.listFiles(session.getCurrentPoject().testClassFilesDirectory(), SpotBugsInfo.EXTENSIONS, true))
         }
 
         log.debug('SourceFiles: ' + Arrays.toString(sourceFiles))

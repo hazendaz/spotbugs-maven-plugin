@@ -45,10 +45,6 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
     /** Locale to use for Resource bundle. */
     static Locale locale = Locale.ENGLISH
 
-    /** Directory containing the class files for Spotbugs to analyze. */
-    @Parameter(defaultValue = '${project.build.outputDirectory}', required = true)
-    File classFilesDirectory
-
     /** Turn on Spotbugs debugging. */
     @Parameter(defaultValue = 'false', property = 'spotbugs.debug')
     boolean debug
