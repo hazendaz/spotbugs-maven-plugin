@@ -1160,7 +1160,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
                 BufferedWriter writer = Files.newBufferedWriter(outputFile.toPath(), effectiveEncoding)
 
-                if (effectiveEncoding.name().equalsIgnoreCase("Cp1252")) {
+                if (effectiveEncoding == StandardCharset.CP1252) {
                     writer.write '<?xml version="1.0" encoding="windows-1252"?>'
                 } else {
                     writer.write '<?xml version="1.0" encoding="' + effectiveEncoding.name().toLowerCase(Locale.ENGLISH) + '"?>'
