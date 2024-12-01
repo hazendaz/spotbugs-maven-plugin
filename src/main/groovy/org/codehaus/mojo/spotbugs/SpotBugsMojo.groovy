@@ -21,8 +21,8 @@ import groovy.json.JsonSlurper
 import groovy.xml.XmlSlurper
 import groovy.xml.slurpersupport.GPathResult
 import groovy.xml.StreamingMarkupBuilder
-
 import org.apache.maven.doxia.siterenderer.Renderer
+import org.apache.maven.doxia.siterenderer.SiteRenderer
 import org.apache.maven.doxia.tools.SiteTool
 import org.apache.maven.execution.MavenSession
 import org.apache.maven.plugin.MojoExecutionException
@@ -140,7 +140,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
     /** Doxia Site Renderer. */
     @Inject
-    Renderer siteRenderer
+    SiteRenderer siteRenderer
 
     /** Directory containing the class files for Spotbugs to analyze. */
     @Parameter(defaultValue = '${project.build.outputDirectory}', required = true)
