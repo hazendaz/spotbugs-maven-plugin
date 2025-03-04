@@ -777,6 +777,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
         if (debug) {
             log.debug("  Adding 'progress'")
             args << '-progress'
+            args << debug
         }
 
         if (pluginList || plugins) {
@@ -801,6 +802,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
         if (relaxed) {
             log.debug("  Adding 'relaxed'")
             args << '-relaxed'
+            args << relaxed
         }
 
         if (nested) {
@@ -826,6 +828,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             String[] includefilters = includeFilterFile.split(SpotBugsInfo.COMMA)
 
             includefilters.each { includefilter ->
+                log.debug("  Adding 'include'")
                 args << '-include'
                 args << resourceHelper.getResourceFile(includefilter.trim())
             }
@@ -835,6 +838,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             log.debug('  Adding Include Filter Files')
 
             includeFilterFiles.each { includefilter ->
+                log.debug("  Adding 'include'")
                 args << '-include'
                 args << resourceHelper.getResourceFile(includefilter.trim())
             }
@@ -845,6 +849,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             String[] excludefilters = excludeFilterFile.split(SpotBugsInfo.COMMA)
 
             excludefilters.each { excludeFilter ->
+                log.debug("  Adding 'exclude'")
                 args << '-exclude'
                 args << resourceHelper.getResourceFile(excludeFilter.trim())
             }
@@ -854,6 +859,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             log.debug('  Adding Exclude Filter Files')
 
             excludeFilterFiles.each { excludeFilter ->
+                log.debug("  Adding 'exclude'")
                 args << '-exclude'
                 args << resourceHelper.getResourceFile(excludeFilter.trim())
             }
@@ -864,6 +870,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             String[] excludeFiles = excludeBugsFile.split(SpotBugsInfo.COMMA)
 
             excludeFiles.each() { excludeFile ->
+                log.debug("  Adding 'excludeBugs'")
                 args << '-excludeBugs'
                 args << resourceHelper.getResourceFile(excludeFile.trim())
             }
@@ -873,6 +880,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             log.debug('  Adding Exclude Bug Files (Baselines)')
 
             excludeBugsFiles.each() { excludeFile ->
+                log.debug("  Adding 'excludeBugs'")
                 args << '-excludeBugs'
                 args << resourceHelper.getResourceFile(excludeFile.trim())
             }
@@ -908,6 +916,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
         if (noClassOk) {
             log.debug("  Adding 'noClassOk'")
             args << '-noClassOk'
+            args << noClassOk
         }
 
         return args
