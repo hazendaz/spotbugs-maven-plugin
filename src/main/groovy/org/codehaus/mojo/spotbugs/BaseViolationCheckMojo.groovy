@@ -58,6 +58,10 @@ abstract class BaseViolationCheckMojo extends AbstractMojo {
     @Parameter(defaultValue = 'false', property = 'spotbugs.includeTests')
     boolean includeTests
 
+    /** Run Spotbugs with -sourcepath parameter populated with the known source roots. */
+    @Parameter(defaultValue = "false", property = "spotbugs.addSourceDirs")
+    boolean addSourceDirs
+
     /** Turn on Spotbugs debugging. */
     @Parameter(defaultValue = 'false', property = 'spotbugs.debug')
     boolean debug
