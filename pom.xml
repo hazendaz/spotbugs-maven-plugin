@@ -734,6 +734,18 @@
                     </rules>
                 </configuration>
             </plugin>
+
+            <!-- 'RemoveUnusedImports is misleading, we are using hidden feature in it to prevent usage of star imports! -->
+            <plugin>
+                <groupId>org.openrewrite.maven</groupId>
+                <artifactId>rewrite-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Open rewrite cannot handle non packaged groovy files used by maven invoker. -->
+                    <exclusions>
+                        <exclusion>**/*verify.groovy</exclusion>
+                    </exclusions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
