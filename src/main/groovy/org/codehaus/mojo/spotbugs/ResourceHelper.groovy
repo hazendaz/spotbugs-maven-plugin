@@ -113,7 +113,7 @@ final class ResourceHelper {
                 Files.createDirectories(outputResourceFile.getParentFile().toPath())
             }
 
-            FileOutputStream os = new FileOutputStream(outputResourceFile)
+            FileOutputStream os = Files.newOutputStream(outputResourceFile.toPath())
 
             os << is
         } catch (IOException e) {
