@@ -350,31 +350,6 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
     String chooseVisitors
 
     /**
-     * The plugin list to include in the report. This is a comma-delimited list.
-     * <p>
-     * Potential values are a filesystem path, a URL, or a classpath resource.
-     * <p>
-     * This parameter is resolved as resource, URL, then file. If successfully
-     * resolved, the contents of the configuration is copied into the
-     * <code>${project.build.directory}</code>
-     * directory before being passed to Spotbugs as a plugin file.
-     *
-     * @since 1.0-beta-1
-     */
-    @Parameter(property = 'spotbugs.pluginList')
-    String pluginList
-
-    /**
-     * Collection of PluginArtifact to work on. (PluginArtifact contains groupId, artifactId, version, type, classifier.)
-     * See <a href="./usage.html#Using Detectors from a Repository">Usage</a> for details.
-     *
-     * @since 2.4.1
-     * @since 4.8.3.0 includes classifier
-     */
-    @Parameter
-    List<PluginArtifact> plugins
-
-    /**
      * Restrict analysis to the given comma-separated list of classes and packages.
      *
      * @since 1.1

@@ -61,20 +61,6 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
     @Parameter(defaultValue = 'Default', property = 'spotbugs.effort')
     String effort
 
-    /** The plugin list to include in the report. This is a SpotbugsInfo.COMMA-delimited list. */
-    @Parameter(property = 'spotbugs.pluginList')
-    String pluginList
-
-    /**
-     * Collection of PluginArtifact to work on. (PluginArtifact contains groupId, artifactId, version, type, classifier.)
-     * See <a href="./usage.html#Using Detectors from a Repository">Usage</a> for details.
-     *
-     * @since 2.4.1
-     * @since 4.8.3.0 includes classifier
-     */
-    @Parameter
-    List<PluginArtifact> plugins
-
     /** Artifact resolver, needed to download the plugin jars. */
     @Inject
     org.eclipse.aether.RepositorySystem repositorySystem
