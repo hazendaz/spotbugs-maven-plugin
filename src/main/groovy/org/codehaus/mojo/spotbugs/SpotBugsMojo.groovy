@@ -844,6 +844,10 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             args << auxClasspathFile.getAbsolutePath()
         }
 
+        log.debug("  Adding 'auxclasspath'")
+        args << '-auxclasspath'
+        args << "${project.compileClasspathElements}"
+
         log.debug("  Adding 'projectName'")
         args << '-projectName'
         args << project.name
