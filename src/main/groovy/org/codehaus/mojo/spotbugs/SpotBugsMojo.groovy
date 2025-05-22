@@ -15,7 +15,6 @@
  */
 package org.codehaus.mojo.spotbugs
 
-import groovy.ant.AntBuilder
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.xml.XmlSlurper
