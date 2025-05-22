@@ -15,12 +15,11 @@
  */
 package org.codehaus.mojo.spotbugs
 
-import groovy.ant.AntBuilder
-
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
+
 import javax.inject.Inject
 
 import org.apache.maven.artifact.Artifact
@@ -128,8 +127,6 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
     @Override
     void execute() {
 
-        List<String> auxClasspathElements = session.getCurrentProject().compileClasspathElements
-
         if (debug) {
             log.debug('  Plugin Artifacts to be added -> ' + pluginArtifacts.toString())
         }
@@ -142,7 +139,20 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
         }
         log.info('File Encoding is ' + effectiveEncoding.name())
 
-        // options must be added before the spotbugsXml path
+        List<String> command = []
+        command << 'java'
+        command << "-Xmx${maxHeap}m"
+        command << '-Dfindbugs.launchUI=gui2'
+        command << "-Dfile.encoding=${effectiveEncoding.name()}"
+        command << '-cp'
+
+        // Build the classpath string from plugin artifacts
+        String classpath = pluginArtifacts.collect { Artifact pluginArtifact ->
+                pluginArtifact.file.absolutePath.join(File.pathSeparator)
+        command << classpath
+        command << 'edu.umd.cs.findbugs.LaunchAppropriateUI'
+
+        // Add SpotBugs CLI arguments
         List<String> spotbugsArgs = []
         spotbugsArgs << getEffortParameter()
         if (pluginList || plugins) {
@@ -150,39 +160,35 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
             spotbugsArgs << getSpotbugsPlugins()
         }
 
-        AntBuilder ant = new AntBuilder()
-        ant.project.setProperty('basedir', spotbugsXmlOutputDirectory.getAbsolutePath())
-        ant.project.setProperty('verbose', 'true')
+        spotbugsArgs.each { String spotbugsArg ->
+            log.debug("Spotbugs arg is ${spotbugsArg}")
+            command << spotbugsArg
+        }
 
-        ant.java(classname: 'edu.umd.cs.findbugs.LaunchAppropriateUI', fork: 'true', failonerror: 'true', clonevm: 'true', maxmemory: "${maxHeap}m") {
+        // Add XML file path if it exists
+        Path spotbugsXml = spotbugsXmlOutputDirectory.toPath().resolve(spotbugsXmlOutputFilename)
+        if (Files.exists(spotbugsXml)) {
+            log.debug('  Found an SpotBugs XML at -> ' + spotbugsXml.toString())
+            command << spotbugsXml.toString()
+        }
 
-            sysproperty(key: 'file.encoding' , value: effectiveEncoding.name())
+        log.debug("Executing SpotBugs with command: ${command.join(' ')}")
 
-            // spotbugs assumes that multiple arguments (because of options) means text mode, so need to request gui explicitly
-            jvmarg(value: '-Dfindbugs.launchUI=gui2')
+        // Launch the SpotBugs process
+        ProcessBuilder pb = new ProcessBuilder(command)
+        pb.directory(spotbugsXmlOutputDirectory)
+        pb.redirectErrorStream(true)
+        Map<String, String> env = pb.environment()
+        env.put('file.encoding', effectiveEncoding.name())
 
-            spotbugsArgs.each { String spotbugsArg ->
-                log.debug("Spotbugs arg is ${spotbugsArg}")
-                arg(value: spotbugsArg)
-            }
+        Process process = pb.start()
+        process.inputStream.eachLine { line ->
+            log.info(line)
+        }
+        int exitCode = process.waitFor()
 
-            Path spotbugsXml = spotbugsXmlOutputDirectory.toPath().resolve(spotbugsXmlOutputFilename)
-
-            if (Files.exists(spotbugsXml)) {
-                log.debug('  Found an SpotBugs XML at -> ' + spotbugsXml.toString())
-                arg(value: spotbugsXml)
-            }
-
-            classpath() {
-
-                pluginArtifacts.each() { Artifact pluginArtifact ->
-                    if (debug) {
-                        log.debug('  Trying to Add to pluginArtifact -> ' + pluginArtifact.file.toString())
-                    }
-
-                    pathelement(location: pluginArtifact.file)
-                }
-            }
+        if (exitCode != 0) {
+            throw new RuntimeException("SpotBugs exited with error code ${exitCode}")
         }
     }
 }
