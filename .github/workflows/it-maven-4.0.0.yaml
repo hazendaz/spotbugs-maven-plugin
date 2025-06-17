@@ -17,6 +17,6 @@ jobs:
           java-version: 21
           distribution: zulu
       - name: Load Maven 4.0.0-rc-3
-        run: mvn -B -V org.apache.maven.plugins:maven-wrapper-plugin:3.3.2:wrapper -Dmaven=4.0.0-rc-3 -Dmaven.resolver.transport=apache  --no-transfer-progress
+        run: mvn -B -V org.apache.maven.plugins:maven-wrapper-plugin:3.3.2:wrapper -Dmaven=4.0.0-rc-3 --no-transfer-progress
       - name: Integration Test with Maven
-        run: ./mvnw -B -V -DtestSrc=remote -Prun-its verify -Dinvoker.parallelThreads=8 -Dlicense.skip=true -Dmaven.min-version=4.0.0-rc-3 --no-transfer-progress
+        run: ./mvnw -B -V -DtestSrc=remote -Prun-its verify -Dinvoker.parallelThreads=8 -Dlicense.skip=true -Dmaven.resolver.transport=apache -Dmaven.min-version=4.0.0-rc-3 --no-transfer-progress
