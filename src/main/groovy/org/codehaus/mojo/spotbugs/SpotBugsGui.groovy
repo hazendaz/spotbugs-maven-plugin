@@ -130,9 +130,7 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
 
         List<String> auxClasspathElements = session.getCurrentProject().compileClasspathElements
 
-        if (debug) {
-            log.debug('  Plugin Artifacts to be added -> ' + pluginArtifacts.toString())
-        }
+        log.debug("  Plugin Artifacts to be added -> ${pluginArtifacts}")
 
         Charset effectiveEncoding
         if (encoding) {
@@ -169,16 +167,14 @@ class SpotBugsGui extends AbstractMojo implements SpotBugsPluginsTrait {
             Path spotbugsXml = spotbugsXmlOutputDirectory.toPath().resolve(spotbugsXmlOutputFilename)
 
             if (Files.exists(spotbugsXml)) {
-                log.debug('  Found an SpotBugs XML at -> ' + spotbugsXml.toString())
+                log.debug("  Found an SpotBugs XML at -> ${spotbugsXml}")
                 arg(value: spotbugsXml)
             }
 
             classpath() {
 
                 pluginArtifacts.each() { Artifact pluginArtifact ->
-                    if (debug) {
-                        log.debug('  Trying to Add to pluginArtifact -> ' + pluginArtifact.file.toString())
-                    }
+                    log.debug("  Trying to Add to pluginArtifact -> ${pluginArtifact.file}")
 
                     pathelement(location: pluginArtifact.file)
                 }
