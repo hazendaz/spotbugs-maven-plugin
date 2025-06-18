@@ -18,6 +18,7 @@ package org.codehaus.mojo.spotbugs
 import groovy.ant.AntBuilder
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic
 import groovy.xml.XmlSlurper
 import groovy.xml.slurpersupport.GPathResult
 import groovy.xml.slurpersupport.NodeChildren
@@ -46,6 +47,7 @@ import org.codehaus.plexus.resource.loader.FileResourceLoader
  * Generates a SpotBugs Report when the site plugin is run.
  * The HTML report is generated for site commands only.
  */
+@CompileStatic
 @Mojo(name = 'spotbugs', requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true, threadSafe = true)
 class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
@@ -534,7 +536,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
         }
 
         if (canGenerate && outputSpotbugsFile == null) {
-            outputSpotbugsFile = new File("${spotbugsXmlOutputDirectory}/${spotbugsXmlOutputFilename}")
+            outputSpotbugsFile = spotbugsXmlOutputDirectory.toPath().resolve(spotbugsXmlOutputFilename).toFile()
 
             executeSpotbugs(outputSpotbugsFile)
 
@@ -632,7 +634,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             log.debug('report Output Directory is ' + getReportOutputDirectory())
             log.debug('Output Directory is ' + outputDirectory)
             log.debug('Classes Directory is ' + classFilesDirectory)
-            log.debug('  Plugin Artifacts to be added -> ' + pluginArtifacts.toString())
+            log.debug("  Plugin Artifacts to be added -> ${pluginArtifacts}")
         }
 
         generateXDoc(locale)
@@ -779,7 +781,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             log.debug("  Adding User Preferences File -> ${userPrefs}")
 
             args << '-userPrefs'
-            args << resourceHelper.getResourceFile(userPrefs.trim())
+            args << resourceHelper.getResourceFile(userPrefs.trim()).toString()
         }
 
         if (htmlOutput) {
@@ -805,7 +807,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
         log.debug("  Adding 'projectName'")
         args << '-projectName'
-        args << "${project.name}"
+        args << project.name
 
         log.debug("  Adding 'effortParameter'")
         args << getEffortParameter()
@@ -866,7 +868,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
             includefilters.each { String includefilter ->
                 args << '-include'
-                args << resourceHelper.getResourceFile(includefilter.trim())
+                args << resourceHelper.getResourceFile(includefilter.trim()).toString()
             }
         }
 
@@ -875,7 +877,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
             includeFilterFiles.each { String includefilter ->
                 args << '-include'
-                args << resourceHelper.getResourceFile(includefilter.trim())
+                args << resourceHelper.getResourceFile(includefilter.trim()).toString()
             }
         }
 
@@ -885,7 +887,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
             excludefilters.each { String excludeFilter ->
                 args << '-exclude'
-                args << resourceHelper.getResourceFile(excludeFilter.trim())
+                args << resourceHelper.getResourceFile(excludeFilter.trim()).toString()
             }
         }
 
@@ -894,7 +896,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
             excludeFilterFiles.each { String excludeFilter ->
                 args << '-exclude'
-                args << resourceHelper.getResourceFile(excludeFilter.trim())
+                args << resourceHelper.getResourceFile(excludeFilter.trim()).toString()
             }
         }
 
@@ -904,7 +906,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
             excludeFiles.each() { String excludeFile ->
                 args << '-excludeBugs'
-                args << resourceHelper.getResourceFile(excludeFile.trim())
+                args << resourceHelper.getResourceFile(excludeFile.trim()).toString()
             }
         }
 
@@ -913,7 +915,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
             excludeBugsFiles.each() { String excludeFile ->
                 args << '-excludeBugs'
-                args << resourceHelper.getResourceFile(excludeFile.trim())
+                args << resourceHelper.getResourceFile(excludeFile.trim()).toString()
             }
         }
 
@@ -931,7 +933,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
         if (maxRank) {
             log.debug("  Adding 'maxRank'")
             args << '-maxRank'
-            args << maxRank
+            args << String.valueOf(maxRank)
         }
 
         if (classFilesDirectory.isDirectory()) {
@@ -1039,7 +1041,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
         if (log.isDebugEnabled()) {
             log.debug("resourceManager.outputDirectory is ${resourceManager.outputDirectory}")
-            log.debug("Plugin Artifacts to be added -> ${pluginArtifacts.toString()}")
+            log.debug("Plugin Artifacts to be added -> ${pluginArtifacts}")
             log.debug("outputFile is ${outputFile.getCanonicalPath()}")
             log.debug("output Directory is ${spotbugsXmlOutputDirectory.getAbsolutePath()}")
             if (htmlOutput) {
@@ -1092,13 +1094,13 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             classpath() {
 
                 pluginArtifacts.each() { Artifact pluginArtifact ->
-                    log.debug('  Adding to pluginArtifact -> ' + pluginArtifact.file.toString())
+                    log.debug("  Adding to pluginArtifact -> ${pluginArtifact.file}")
 
                     pathelement(location: pluginArtifact.file)
                 }
             }
 
-            spotbugsArgs.each { spotbugsArg ->
+            spotbugsArgs.each { String spotbugsArg ->
                 log.debug("Spotbugs arg is ${spotbugsArg}")
                 arg(value: spotbugsArg)
             }
@@ -1222,8 +1224,8 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             File sarifFinalFile = new File(sarifOutputDirectory, sarifOutputFilename)
             forceFileCreation(sarifFinalFile)
 
-            sarifFinalFile.withWriter {
-                builder.writeTo(it)
+            sarifFinalFile.withWriter { BufferedWriter writer ->
+                builder.writeTo(writer)
             }
 
             if (!log.isDebugEnabled()) {
