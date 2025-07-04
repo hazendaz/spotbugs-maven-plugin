@@ -79,4 +79,116 @@ class BaseViolationCheckMojoTest extends Specification {
         notThrown(Exception)
     }
 
+    void 'should have a default description'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.description == 'Base class for SpotBugs violation check mojos'
+    }
+
+    void 'should have a default name'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.name == 'SpotBugs Violation Check Mojo'
+    }
+
+    void 'should have a default goal'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.goal == 'spotbugs-violation-check'
+    }
+
+    void 'should have a default phase'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.phase == 'validate'
+    }
+
+    void 'should have a default requiresDependencyResolution'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.requiresDependencyResolution == 'compile'
+    }
+
+    void 'should have a default requiresProject'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.requiresProject == true
+    }
+
+    void 'should have a default requiresOnline'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.requiresOnline == false
+    }
+
+        void 'should have a default requiresDirectInvocation'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.requiresDirectInvocation == true
+    }
+
+        void 'should have a default requiresReports'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.requiresReports == true
+    }
+
+    void 'should have a default requiresProjectState'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.requiresProjectState == 'project'
+    }
+
+    void 'should have a default requiresDependencyManagement'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.requiresDependencyManagement == true
+    }
+
+    void 'should have a default requiresPluginState'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.requiresPluginState == true
+    }
+
+    void 'should have a default requiresProjectLocking'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.requiresProjectLocking == false
+    }
+
+    void 'should have a default requiresProjectLockingState'() {
+        given:
+        TestMojo mojo = new TestMojo()
+
+        expect:
+        mojo.requiresProjectLockingState == false
+    }
+
 }
