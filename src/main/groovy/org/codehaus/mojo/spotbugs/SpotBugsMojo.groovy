@@ -1148,9 +1148,17 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             log.debug('File Encoding is ' + effectiveEncoding.name())
         }
 
+        List<String> command = []
+        command << 'java'
+        command << "-Xmx${maxHeap}m"
+        command << '-Dfindbugs.launchUI=gui2'
+        command << "-Dfile.encoding=${effectiveEncoding.name()}"
+        command << '-cp'
+
+
         AntBuilder ant = new AntBuilder()
         ant.java(classname: 'edu.umd.cs.findbugs.FindBugs2', fork: "${fork}", failonerror: 'true',
-                clonevm: 'false', timeout: timeout, maxmemory: "${maxHeap}m") {
+                clonevm: 'false', timeout: timeout) {
 
             sysproperty(key: 'file.encoding', value: effectiveEncoding.name())
 
