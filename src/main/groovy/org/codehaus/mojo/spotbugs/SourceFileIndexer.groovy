@@ -18,7 +18,7 @@ package org.codehaus.mojo.spotbugs
 import org.apache.maven.execution.MavenSession
 import org.apache.maven.model.Resource
 import org.apache.maven.plugin.MojoExecutionException
-
+import org.apache.maven.project.MavenProject
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -38,34 +38,69 @@ class SourceFileIndexer {
      * @param session Reference to the Maven session used to get the location of the root directory
      */
     protected void buildListSourceFiles(MavenSession session) {
+        MavenProject project = session.getCurrentProject()
 
-        String basePath = normalizePath(session.getExecutionRootDirectory())
-
-        List<File> allSourceFiles = []
-
-        // Resource
-        for (Resource r in session.getCurrentProject().getResources()) {
-            scanDirectory(Path.of(r.directory), allSourceFiles, basePath)
+        // Add Groovy, Kotlin, and Scala sources to compileSourceRoots if they exist and are not already present
+        List<String> extraSourceDirs = ['src/main/groovy', 'src/main/kotlin', 'src/main/scala']
+        for (String dir : extraSourceDirs) {
+            Path path = project.getBasedir().toPath().resolve(dir)
+            String pathStr = path.toString()
+            if (Files.exists(path) && !project.getCompileSourceRoots().contains(pathStr)) {
+                project.getCompileSourceRoots().add(pathStr)
+            }
         }
 
-        for (Resource r in session.getCurrentProject().getTestResources()) {
-            scanDirectory(Path.of(r.directory), allSourceFiles, basePath)
+        // Add Groovy, Kotlin, and Scala test sources to testCompileSourceRoots if they exist and are not already present
+        List<String> extraTestDirs = ['src/test/groovy', 'src/test/kotlin', 'src/test/scala']
+        for (String dir : extraTestDirs) {
+            Path path = project.getBasedir().toPath().resolve(dir)
+            String pathStr = path.toString()
+            if (Files.exists(path) && !project.getTestCompileSourceRoots().contains(pathStr)) {
+                project.getTestCompileSourceRoots().add(pathStr)
+            }
+        }
+
+        // Add webapp resources to resources if it exists and is not already present
+        Path webappPath = project.getBasedir().toPath().resolve("src/main/webapp")
+        String webappPathStr = webappPath.toString()
+        boolean webappAlreadyAdded = project.getResources().any { Resource resource -> resource.directory == webappPathStr }
+        if (Files.exists(webappPath) && !webappAlreadyAdded) {
+            Resource webappResource = new Resource()
+            webappResource.setDirectory(webappPathStr)
+            project.getResources().add(webappResource)
+        }
+
+        // Add webapp test resources if it exists and is not already present
+        Path webappTestPath = project.getBasedir().toPath().resolve("src/test/webapp")
+        String webappTestPathStr = webappTestPath.toString()
+        boolean webappTestAlreadyAdded = project.getTestResources().any { Resource resource -> resource.directory == webappTestPathStr }
+        if (Files.exists(webappTestPath) && !webappTestAlreadyAdded) {
+            Resource webappTestResource = new Resource()
+            webappTestResource.setDirectory(webappTestPathStr)
+            project.getTestResources().add(webappTestResource)
+        }
+
+        // All source files to load
+        List<File> allSourceFiles = []
+
+        // Normalized base path
+        String basePath = normalizePath(session.getExecutionRootDirectory())
+
+        // Resource
+        for (Resource resource in project.getResources()) {
+            scanDirectory(Path.of(resource.directory), allSourceFiles, basePath)
+        }
+        for (Resource resource in project.getTestResources()) {
+            scanDirectory(Path.of(resource.directory), allSourceFiles, basePath)
         }
 
         // Source files
-        for (String sourceRoot in session.getCurrentProject().getCompileSourceRoots()) {
+        for (String sourceRoot in project.getCompileSourceRoots()) {
             scanDirectory(Path.of(sourceRoot), allSourceFiles, basePath)
         }
-
-        for (String sourceRoot in session.getCurrentProject().getTestCompileSourceRoots()) {
+        for (String sourceRoot in project.getTestCompileSourceRoots()) {
             scanDirectory(Path.of(sourceRoot), allSourceFiles, basePath)
         }
-
-        // While not perfect, add the following paths will add basic support for Groovy, Kotlin, Scala and Webapp sources.
-        scanDirectory(session.getCurrentProject().getBasedir().toPath().resolve('src/main/groovy'), allSourceFiles, basePath)
-        scanDirectory(session.getCurrentProject().getBasedir().toPath().resolve('src/main/kotlin'), allSourceFiles, basePath)
-        scanDirectory(session.getCurrentProject().getBasedir().toPath().resolve('src/main/scala'), allSourceFiles, basePath)
-        scanDirectory(session.getCurrentProject().getBasedir().toPath().resolve('src/main/webapp'), allSourceFiles, basePath)
 
         this.allSourceFiles = allSourceFiles
     }
