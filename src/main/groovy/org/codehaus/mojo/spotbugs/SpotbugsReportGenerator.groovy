@@ -360,8 +360,11 @@ class SpotbugsReportGenerator implements SpotBugsInfo {
                 return
             }
             prefix = PathTool.getRelativePath(outputDirectory.getAbsolutePath(), xrefLocation.getAbsolutePath())
-            prefix = prefix ? prefix + SpotBugsInfo.URL_SEPARATOR + xrefLocation.getName() +
-                SpotBugsInfo.URL_SEPARATOR : SpotBugsInfo.PERIOD
+            if (prefix == null) {
+                prefix = SpotBugsInfo.PERIOD
+            } else {
+                prefix = prefix + SpotBugsInfo.URL_SEPARATOR + xrefLocation.getName() + SpotBugsInfo.URL_SEPARATOR
+            }
         }
 
         if (includeTests && !prefix) {
@@ -371,8 +374,11 @@ class SpotbugsReportGenerator implements SpotBugsInfo {
                     return
                 }
                 prefix = PathTool.getRelativePath(outputDirectory.getAbsolutePath(), xrefTestLocation.getAbsolutePath())
-                prefix = prefix ? prefix + SpotBugsInfo.URL_SEPARATOR + xrefTestLocation.getName() +
-                    SpotBugsInfo.URL_SEPARATOR : SpotBugsInfo.PERIOD
+                if (prefix == null) {
+                    prefix = SpotBugsInfo.PERIOD
+                } else {
+                    prefix = prefix + SpotBugsInfo.URL_SEPARATOR + xrefTestLocation.getName() + SpotBugsInfo.URL_SEPARATOR
+                }
             }
         }
 
