@@ -42,6 +42,49 @@ class SourceFileIndexer {
      * @param session Reference to the Maven session used to get the location of the root directory
      */
     protected void buildListSourceFiles(MavenSession session) {
+        // Get current project
+        MavenProject project = session.getCurrentProject()
+
+        // Add Groovy, Kotlin, and Scala sources to compileSourceRoots if they exist and are not already present
+        List<String> extraSourceDirs = ['src/main/groovy', 'src/main/kotlin', 'src/main/scala']
+        for (String dir : extraSourceDirs) {
+            Path path = project.getBasedir().toPath().resolve(dir)
+            String pathStr = path.toString()
+            if (Files.exists(path) && !project.getCompileSourceRoots().contains(pathStr)) {
+                project.getCompileSourceRoots().add(pathStr)
+            }
+        }
+
+        // Add Groovy, Kotlin, and Scala test sources to testCompileSourceRoots if they exist and are not already present
+        List<String> extraTestDirs = ['src/test/groovy', 'src/test/kotlin', 'src/test/scala']
+        for (String dir : extraTestDirs) {
+            Path path = project.getBasedir().toPath().resolve(dir)
+            String pathStr = path.toString()
+            if (Files.exists(path) && !project.getTestCompileSourceRoots().contains(pathStr)) {
+                project.getTestCompileSourceRoots().add(pathStr)
+            }
+        }
+
+        // Add webapp resources to resources if it exists and is not already present
+        Path webappPath = project.getBasedir().toPath().resolve("src/main/webapp")
+        String webappPathStr = webappPath.toString()
+        boolean webappAlreadyAdded = project.getResources().any { Resource resource -> resource.directory == webappPathStr }
+        if (Files.exists(webappPath) && !webappAlreadyAdded) {
+            Resource webappResource = new Resource()
+            webappResource.setDirectory(webappPathStr)
+            project.getResources().add(webappResource)
+        }
+
+        // Add webapp test resources if it exists and is not already present
+        Path webappTestPath = project.getBasedir().toPath().resolve("src/test/webapp")
+        String webappTestPathStr = webappTestPath.toString()
+        boolean webappTestAlreadyAdded = project.getTestResources().any { Resource resource -> resource.directory == webappTestPathStr }
+        if (Files.exists(webappTestPath) && !webappTestAlreadyAdded) {
+            Resource webappTestResource = new Resource()
+            webappTestResource.setDirectory(webappTestPathStr)
+            project.getTestResources().add(webappTestResource)
+        }
+
         lock.lock()
         try {
             // All source files to load
@@ -49,9 +92,6 @@ class SourceFileIndexer {
 
             // Normalized base path
             String basePath = normalizePath(session.getExecutionRootDirectory())
-
-            // Get current project
-            MavenProject project = session.getCurrentProject()
 
             // Resource
             for (Resource resource in project.getResources()) {
@@ -70,18 +110,6 @@ class SourceFileIndexer {
             for (String sourceRoot in project.getTestCompileSourceRoots()) {
                 scanDirectory(Path.of(sourceRoot), basePath)
             }
-
-            // While not perfect, add the following paths will add basic support for Groovy, Kotlin, Scala and Webapp sources.
-            scanDirectory(project.getBasedir().toPath().resolve('src/main/groovy'), basePath)
-            scanDirectory(project.getBasedir().toPath().resolve('src/main/kotlin'), basePath)
-            scanDirectory(project.getBasedir().toPath().resolve('src/main/scala'), basePath)
-            scanDirectory(project.getBasedir().toPath().resolve('src/main/webapp'), basePath)
-
-            scanDirectory(project.getBasedir().toPath().resolve('src/test/groovy'), basePath)
-            scanDirectory(project.getBasedir().toPath().resolve('src/test/kotlin'), basePath)
-            scanDirectory(project.getBasedir().toPath().resolve('src/test/scala'), basePath)
-            scanDirectory(project.getBasedir().toPath().resolve('src/test/webapp'), basePath)
-
         } finally {
             lock.unlock()
         }
