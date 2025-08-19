@@ -374,6 +374,12 @@ class SpotbugsReportGenerator implements SpotBugsInfo {
             }
         }
 
+        // Fallback if prefix is still null (e.g., for unmatched roots)
+        if (!prefix) {
+            prefix = SpotBugsInfo.PERIOD
+        }
+
+
         String className = line.@classname.text().replace('.', '/')
         Matcher matcher = INNER_CLASS_PATTERN.matcher(className)
         String cleanClassName = matcher.replaceFirst('')
