@@ -1222,6 +1222,10 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             log.debug('Html temp file exixts with content....')
         }
 
+        // Create the indexer to build the source files list and pre-load additional source roots
+        SourceFileIndexer indexer = new SourceFileIndexer()
+        indexer.addAdditionalSourceRoots(session)
+
         if (xmlTempFile.exists()) {
             if (xmlTempFile.size() > 0) {
                 XmlSlurper xmlSlurper = new XmlSlurper()
@@ -1303,8 +1307,6 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             // This change is required for some tool including Github code scanning API
             if (sarifFullPath) {
 
-                SourceFileIndexer indexer = new SourceFileIndexer()
-
                 indexer.buildListSourceFiles(session)
 
                 for (result in slurpedResult.runs.results[0]) {
@@ -1312,7 +1314,7 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
                     for (loc in result.locations) {
                         String originalFullPath = loc.physicalLocation.artifactLocation.uri
 
-                        //We replace relative path to the complete path
+                        // We replace relative path to the complete path
                         String newFileName = indexer.searchActualFilesLocation(originalFullPath)
 
                         if (newFileName != null) {

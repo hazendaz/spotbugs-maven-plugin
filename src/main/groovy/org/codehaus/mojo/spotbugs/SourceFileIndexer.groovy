@@ -37,11 +37,11 @@ class SourceFileIndexer {
     private List<String> allSourceFiles = []
 
     /**
-     * Initialize the complete list of source files with their
+     * Add additional source roots to the current Maven project for groovy, kotlin, scala, and webapp.
      *
      * @param session Reference to the Maven session used to get the location of the root directory
      */
-    protected void buildListSourceFiles(MavenSession session) {
+    protected void addAdditionalSourceRoots(MavenSession session) {
         // Get current project
         MavenProject project = session.getCurrentProject()
 
@@ -84,6 +84,16 @@ class SourceFileIndexer {
             webappTestResource.setDirectory(webappTestPathStr)
             project.getTestResources().add(webappTestResource)
         }
+    }
+
+    /**
+     * Initialize the complete list of source files with their path relative to the root directory.
+     *
+     * @param session Reference to the Maven session used to get the location of the root directory
+     */
+    protected void buildListSourceFiles(MavenSession session) {
+        // Get current project
+        MavenProject project = session.getCurrentProject()
 
         lock.lock()
         try {
