@@ -648,6 +648,15 @@
                         </attributes>
                     </configuration>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jxr-plugin</artifactId>
+                    <configuration>
+                        <sourceDirectory>${project.basedir}/src/main/groovy</sourceDirectory>
+                        <testSourceDirectory>${project.basedir}/src/test/groovy</testSourceDirectory>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
