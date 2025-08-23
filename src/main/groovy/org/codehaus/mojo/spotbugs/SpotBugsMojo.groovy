@@ -18,6 +18,7 @@ package org.codehaus.mojo.spotbugs
 import groovy.ant.AntBuilder
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic
 import groovy.xml.XmlSlurper
 import groovy.xml.slurpersupport.GPathResult
 import groovy.xml.slurpersupport.NodeChild
@@ -48,6 +49,7 @@ import org.codehaus.plexus.resource.loader.FileResourceLoader
  * Generates a SpotBugs Report when the site plugin is run.
  * The HTML report is generated for site commands only.
  */
+@CompileStatic
 @Mojo(name = 'spotbugs', requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true, threadSafe = true)
 class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
 
