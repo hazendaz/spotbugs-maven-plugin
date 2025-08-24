@@ -15,7 +15,6 @@
  */
 package org.codehaus.mojo.spotbugs
 
-import groovy.ant.AntBuilder
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import groovy.xml.XmlSlurper
@@ -1158,54 +1157,53 @@ class SpotBugsMojo extends AbstractMavenReport implements SpotBugsPluginsTrait {
             log.debug('File Encoding is ' + effectiveEncoding.name())
         }
 
-        AntBuilder ant = new AntBuilder()
-        ant.java(classname: 'edu.umd.cs.findbugs.FindBugs2', fork: "${fork}", failonerror: 'true',
-                clonevm: 'false', timeout: timeout, maxmemory: "${maxHeap}m") {
+        // Build classpath from pluginArtifacts
+        List<String> classpathElements = pluginArtifacts.collect { Artifact pluginArtifact -> pluginArtifact.file.getAbsolutePath() }
+        String classpath = classpathElements.join(File.pathSeparator)
 
-            sysproperty(key: 'file.encoding', value: effectiveEncoding.name())
+        // Build JVM args
+        List<String> jvmArgsList = []
+        if (jvmArgs && fork) {
+            jvmArgsList.addAll(jvmArgs.split(SpotBugsInfo.BLANK))
+        }
+        jvmArgsList << "-Dfile.encoding=${effectiveEncoding.name()}"
+        if (debug || trace) {
+            jvmArgsList << "-Dfindbugs.debug=true"
+        }
+        systemPropertyVariables.each { k, v ->
+            jvmArgsList << "-D${k}=${v}"
+        }
 
-            if (jvmArgs && fork) {
+        // Build command
+        List<String> command = []
+        command << "java"
+        command.addAll(jvmArgsList)
+        command << "-cp"
+        command << classpath
+        command << "edu.umd.cs.findbugs.FindBugs2"
+        command.addAll(spotbugsArgs)
+
+        if (log.isDebugEnabled()) {
+            log.debug("SpotBugs command: ${command}")
+        }
+
+        ProcessBuilder pb = new ProcessBuilder(command)
+        pb.redirectErrorStream(true)
+        pb.directory(new File(session.getCurrentProject().getBuild().directory))
+
+        Process process = pb.start()
+        process.inputStream.withReader(effectiveEncoding) { reader ->
+            reader.eachLine { line ->
                 if (log.isDebugEnabled()) {
-                    log.debug("Adding JVM Args => ${jvmArgs}")
-                }
-
-                List<String> args = Arrays.asList(jvmArgs.split(SpotBugsInfo.BLANK))
-
-                args.each() { String jvmArg ->
-                    if (log.isDebugEnabled()) {
-                        log.debug("Adding JVM Arg => ${jvmArg}")
-                    }
-                    jvmarg(value: jvmArg)
+                    log.debug("SpotBugs: ${line}")
                 }
             }
-
-            if (debug || trace) {
-                sysproperty(key: 'findbugs.debug', value: Boolean.TRUE)
-            }
-
-            classpath() {
-
-                pluginArtifacts.each() { Artifact pluginArtifact ->
-                    if (log.isDebugEnabled()) {
-                        log.debug("  Adding to pluginArtifact -> ${pluginArtifact.file}")
-                    }
-
-                    pathelement(location: pluginArtifact.file)
-                }
-            }
-
-            spotbugsArgs.each { String spotbugsArg ->
-                if (log.isDebugEnabled()) {
-                    log.debug("Spotbugs arg is ${spotbugsArg}")
-                }
-                arg(value: spotbugsArg)
-            }
-
-            systemPropertyVariables.each { Map.Entry<String, String> sysProp ->
-                if (log.isDebugEnabled()) {
-                    log.debug("System property ${sysProp.key} is ${sysProp.value}")
-                }
-                sysproperty(key: sysProp.key, value: sysProp.value)
+        }
+        int exitCode = process.waitFor()
+        if (exitCode != 0) {
+            log.error("SpotBugs process exited with code ${exitCode}")
+            if (failOnError) {
+                throw new MojoExecutionException("SpotBugs failed with exit code ${exitCode}")
             }
         }
 

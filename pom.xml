@@ -134,7 +134,6 @@
         <junitVersion>6.0.1</junitVersion>
         <slf4jVersion>2.0.17</slf4jVersion>
 
-        <antVersion>1.10.15</antVersion>
         <groovyVersion>5.0.2</groovyVersion>
         <javaparserVersion>3.27.1</javaparserVersion>
 
@@ -276,13 +275,6 @@
                 <version>${saxon.he.version}</version>
             </dependency>
 
-            <!-- Override 'ant' used in groovy to latest -->
-            <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant</artifactId>
-                <version>${antVersion}</version>
-            </dependency>
-
             <!-- Commons -->
             <dependency>
                 <groupId>commons-beanutils</groupId>
@@ -421,22 +413,6 @@
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-ant</artifactId>
-            <exclusions>
-                <!-- We do not need these items from groovy ant -->
-                <exclusion>
-                    <groupId>org.apache.ant</groupId>
-                    <artifactId>ant-antlr</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.ant</groupId>
-                    <artifactId>ant-junit</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Groovy quirk requires compile scope so optional makes it not show up in consumer builds. -->
