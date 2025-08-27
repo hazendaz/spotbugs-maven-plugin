@@ -20,4 +20,4 @@ import java.nio.file.Path
 // Check no missing classes
 
 Path buildLog = basedir.toPath().resolve('build.log')
-assert buildLog.text.contains('Timeout: killed the sub-process')
+assert buildLog.getText('UTF-8').contains('Timeout: killed the sub-process')
