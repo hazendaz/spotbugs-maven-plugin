@@ -19,4 +19,4 @@ import java.nio.file.Path
 // Check no missing classes
 
 Path buildLog = basedir.toPath().resolve('build.log')
-assert buildLog.text.contains('BUILD SUCCESS')
+assert buildLog.getText('UTF-8').contains('BUILD SUCCESS')

@@ -17,4 +17,4 @@
 import java.nio.file.Path
 
 Path buildLog = basedir.toPath().resolve('build.log')
-assert buildLog.text.contains('[ERROR] High: Found reliance on default encoding in UserMistakes')
+assert buildLog.getText('UTF-8').contains('[ERROR] High: Found reliance on default encoding in UserMistakes')

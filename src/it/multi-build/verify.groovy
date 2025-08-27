@@ -44,7 +44,7 @@ println '******************'
 
 String effortLevel = 'default'
 
-assert spotbugsHtml.text.contains('<i>' + effortLevel + '</i>')
+assert spotbugsHtml.getText('UTF-8').contains('<i>' + effortLevel + '</i>')
 
 XmlSlurper xmlSlurper = new XmlSlurper()
 xmlSlurper.setFeature('http://apache.org/xml/features/disallow-doctype-decl', true)
@@ -113,7 +113,7 @@ println '******************'
 println 'Checking HTML file'
 println '******************'
 
-assert spotbugsHtml.text.contains('<i>' + effortLevel + '</i>')
+assert spotbugsHtml.getText('UTF-8').contains('<i>' + effortLevel + '</i>')
 
 // Temporarily allow DOCTYPE for HTML parsing
 xmlSlurper.setFeature('http://apache.org/xml/features/disallow-doctype-decl', false)

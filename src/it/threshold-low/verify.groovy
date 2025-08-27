@@ -36,7 +36,7 @@ println '******************'
 
 String thresholdLevel = 'low'
 
-assert spotbugsHtml.text.contains('<i>' + thresholdLevel + '</i>')
+assert spotbugsHtml.getText('UTF-8').contains('<i>' + thresholdLevel + '</i>')
 
 XmlSlurper xmlSlurper = new XmlSlurper()
 xmlSlurper.setFeature('http://apache.org/xml/features/disallow-doctype-decl', true)

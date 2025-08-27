@@ -17,4 +17,4 @@
 import java.nio.file.Path
 
 Path buildLog = basedir.toPath().resolve('build.log')
-assert buildLog.text.contains('BugInstance size is 2')
+assert buildLog.getText('UTF-8').contains('BugInstance size is 2')
