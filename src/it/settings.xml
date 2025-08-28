@@ -72,5 +72,11 @@
         </pluginRepository>
       </pluginRepositories>
     </profile>
+    <profile>
+        <id>allow-sha512</id>
+        <properties>
+            <aether.checksums.algorithms>SHA-512,SHA-256,SHA-1,MD5</aether.checksums.algorithms>
+        </properties>
+    </profile>
   </profiles>
 </settings>
