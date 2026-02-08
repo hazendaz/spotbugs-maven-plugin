@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright 2005-2025 the original author or authors.
+    Copyright 2005-2026 the original author or authors.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -654,7 +654,7 @@
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>add-stubfixer-sources</id>
+                        <id>add-additional-source-files</id>
                         <goals>
                             <goal>add-source</goal>
                         </goals>
@@ -662,6 +662,19 @@
                         <configuration>
                             <sources>
                                 <source>${project.basedir}/src/stubfixer/java</source>
+                                <source>${project.build.directory}/generated-sources/groovy-stubs/main</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-additional-test-source-files</id>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <phase>generate-test-sources</phase>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/groovy-stubs/test</source>
                             </sources>
                         </configuration>
                     </execution>

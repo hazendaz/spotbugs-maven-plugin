@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2025 the original author or authors.
+ * Copyright 2005-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 package org.codehaus.mojo.spotbugs
 
 import groovy.xml.XmlSlurper
+import groovy.xml.slurpersupport.GPathResult
+
+import java.nio.file.Path
 
 import org.apache.maven.doxia.sink.Sink
 import org.apache.maven.plugin.logging.Log
@@ -89,6 +92,39 @@ class SpotbugsReportGeneratorTest extends Specification {
         3 * sink.table()
         1 * sink.flush()
         1 * sink.close()
+    }
+
+    void 'assembleJxrHyperlink does not emit literal null when no source roots match'() {
+        given:
+        Sink sink = Mock()
+        ResourceBundle bundle = new StubResourceBundle()
+        Log log = Mock()
+
+        SpotbugsReportGenerator generator = new SpotbugsReportGenerator(sink, bundle)
+        generator.log = log
+        generator.outputDirectory = Path.of('.').toFile()
+        generator.xrefLocation = Path.of('xref').toFile()
+        generator.xrefTestLocation = Path.of('xref-test').toFile()
+        generator.compileSourceRoots = ['src/main/java']
+        generator.testSourceRoots = ['src/test/java']
+        generator.includeTests = true
+
+        XmlSlurper slurper = new XmlSlurper()
+        slurper.setFeature('http://apache.org/xml/features/disallow-doctype-decl', true)
+        slurper.setFeature('http://apache.org/xml/features/nonvalidating/load-external-dtd', false)
+
+        // Use a sourcepath that won't exist under the configured roots, so prefix remains the default '.'
+        GPathResult line = slurper.parseText(
+            "<SourceLine classname='com.example.Foo' sourcepath='definitely/does/not/exist/Foo.java' start='12' end='12'/>"
+        )
+
+        when:
+        String hyperlink = generator.assembleJxrHyperlink(line)
+
+        then:
+        hyperlink
+        !hyperlink.contains('null')
+        hyperlink.contains('href="./com/example/Foo.html#L12"')
     }
 
 }

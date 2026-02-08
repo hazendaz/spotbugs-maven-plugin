@@ -351,25 +351,36 @@ class SpotbugsReportGenerator implements SpotBugsInfo {
             log.debug('xrefTestLocation is ' + xrefTestLocation.getAbsolutePath())
         }
 
-        String prefix
+        String prefix = SpotBugsInfo.PERIOD
+        boolean prefixSet = false
+
         compileSourceRoots.each { String compileSourceRoot ->
             Path sourcePath = Path.of(compileSourceRoot).resolve(line.@sourcepath.text())
             if (Files.notExists(sourcePath)) {
                 return
             }
-            prefix = outputDirectory.toPath().relativize(xrefLocation.toPath())
-            prefix = prefix ? prefix + SpotBugsInfo.URL_SEPARATOR : SpotBugsInfo.PERIOD
+
+            String rel = outputDirectory.toPath().relativize(xrefLocation.toPath()).toString().replace('\\', '/')
+            prefix = (rel ? rel + SpotBugsInfo.URL_SEPARATOR : SpotBugsInfo.PERIOD
+            prefixSet = true
         }
 
-        if (includeTests && !prefix) {
+        if (includeTests && !prefixSet) {
             testSourceRoots.each { String testSourceRoot ->
                 Path testSourcePath = Path.of(testSourceRoot).resolve(line.@sourcepath.text())
                 if (Files.notExists(testSourcePath)) {
                     return
                 }
-                prefix = outputDirectory.toPath().relativize(xrefTestLocation.toPath())
-                prefix = prefix ? prefix + SpotBugsInfo.URL_SEPARATOR : SpotBugsInfo.PERIOD
+
+                String rel = outputDirectory.toPath().relativize(xrefTestLocation.toPath()).toString().replace('\\', '/')
+                prefix = (rel ? rel + SpotBugsInfo.URL_SEPARATOR : SpotBugsInfo.PERIOD
+                prefixSet = true
             }
+        }
+
+        // Make sure '.' behaves like './' when concatenating.
+        if (SpotBugsInfo.PERIOD == prefix) {
+            prefix = SpotBugsInfo.PERIOD + SpotBugsInfo.URL_SEPARATOR
         }
 
         String className = line.@classname.text().replace('.', '/')
