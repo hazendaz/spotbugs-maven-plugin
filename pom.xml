@@ -20,7 +20,7 @@
 
     <groupId>com.github.spotbugs</groupId>
     <artifactId>spotbugs-maven-plugin</artifactId>
-    <version>4.10.4.2-SNAPSHOT</version>
+    <version>HEAD</version>
     <packaging>maven-plugin</packaging>
 
     <name>spotbugs-maven-plugin</name>
